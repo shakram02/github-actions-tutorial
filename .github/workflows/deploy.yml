@@ -3,10 +3,10 @@ name: Deploy Go Server
 on:
   push:
     branches:
-      - master  # Trigger deployment on push to the master branch
+      - master # Trigger deployment on push to the master branch
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -15,10 +15,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.23'  # Specify your Go version
+          go-version: "1.23" # Specify your Go version
 
       - name: Build Go application
-        run: go build -o demo-server main.go  # Compile the Go app
+        run: go build -o demo-server main.go # Compile the Go app
 
       - name: Test application
         run: go test ./...
@@ -29,8 +29,8 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "demo-server"  # Source binary
-          target: "/path/to/your/app/"  # Destination on server
+          source: "demo-server" # Source binary
+          target: "/path/to/your/app/" # Destination on server
 
       - name: Restart service
         run: |
