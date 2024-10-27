@@ -1,0 +1,12 @@
+[Unit]
+Description=Go Demo Server
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/demo-server
+ExecStart=/home/ubuntu/demo-server/demo-server
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

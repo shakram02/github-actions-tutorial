@@ -1,0 +1,37 @@
+name: Deploy Go Server
+
+on:
+  push:
+    branches:
+      - master  # Trigger deployment on push to the master branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.23'  # Specify your Go version
+
+      - name: Build Go application
+        run: go build -o demo-server main.go  # Compile the Go app
+
+      - name: Test application
+        run: go test ./...
+
+      - name: Sync to Server with rsync
+        uses: appleboy/scp-action@v0.1.6
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "demo-server"  # Source binary
+          target: "/path/to/your/app/"  # Destination on server
+
+      - name: Restart service
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'sudo systemctl restart demo-server'
