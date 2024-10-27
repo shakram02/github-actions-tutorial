@@ -18,20 +18,23 @@ jobs:
           go-version: "1.23" # Specify your Go version
 
       - name: Build Go application
-        run: go build -o demo-server main.go # Compile the Go app
+        run: go build -o go-demo-server main.go # Compile the Go app
 
       - name: Test application
         run: go test ./...
-
+      
+      
       - name: Sync to Server with rsync
         uses: appleboy/scp-action@v0.1.6
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "demo-server" # Source binary
-          target: "/path/to/your/app/" # Destination on server
+          source: "go-demo-server" # Source binary
+          target: "/home/ubuntu/ci_cd_demo" # Destination on server
 
       - name: Restart service
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'sudo systemctl restart demo-server'
+          echo '${{ secrets.SSH_PRIVATE_KEY }}' >> ssh_id
+          chmod 600 ssh_id
+          ssh -o StrictHostKeyChecking=no -i ssh_id ${{ vars.SERVER_USER }}@${{ vars.SERVER_IP }} 'sudo systemctl restart go-demo-server'

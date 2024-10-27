@@ -6,7 +6,7 @@ After=network.target
 User=ubuntu
 WorkingDirectory=/home/ubuntu/demo-server
 ExecStart=/home/ubuntu/demo-server/demo-server
-Restart=always
+# Restart=always
 
 [Install]
 WantedBy=multi-user.target
